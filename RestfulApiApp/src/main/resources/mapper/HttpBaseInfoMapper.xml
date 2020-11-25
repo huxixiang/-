@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.HttpBaseInfoMapper" >
+    <resultMap id="BaseResultMap" type="com.dcits.restapiapp.model.HttpBaseInfoModel">
+        <result column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="method" jdbcType="VARCHAR" property="method" />
+        <result column="interface_name" jdbcType="VARCHAR" property="interfaceName" />
+    </resultMap>
+
+    <select id="searchHttpBaseInfoByInterfaceId" parameterType="String" resultType="com.dcits.restapiapp.model.HttpBaseInfoModel">
+        select interface_id as 'interfaceId',
+        url as 'url',
+        method as 'method',
+        interface_name as 'interfaceName'
+         from http_base_info where interface_id=#{interfaceId}
+    </select>
+
+    <insert id="saveHttpBaseInfo" parameterType="com.dcits.restapiapp.model.HttpBaseInfoModel">
+        insert into http_base_info(interface_id,url,method,interface_name)
+        values (#{interfaceId},#{url},#{method},#{interfaceName})
+    </insert>
+
+
+    <select id="searchInterfaceIdByName" parameterType="String" resultType="com.dcits.restapiapp.model.HttpBaseInfoModel">
+        select interface_id as 'interfaceId',
+        url as 'url',
+        method as 'method',
+        interface_name as 'interfaceName' from http_base_info
+        where 1=1
+        <if test="interfaceName !=null">
+            and interface_name like "%"#{interfaceName}"%"
+        </if>
+    </select>
+
+    <select id="searchIdsByIdOrName" parameterType="String" resultType="String">
+        select interface_id as 'interfaceId' from http_base_info
+        where interface_id=#{interfaceIdOrName} or interface_name = #{interfaceIdOrName}
+    </select>
+
+    <delete id="deletebyInterfaceIds" parameterType="String">
+        delete from http_base_info where interface_id in 
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="searchNameById" parameterType="String" resultType="String">
+        select interface_name from http_base_info where interface_id=#{interfaceId}
+    </select>
+
+
+</mapper>

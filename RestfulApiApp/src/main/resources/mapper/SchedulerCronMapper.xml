@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.SchedulerCronMapper" >
+    <resultMap id="BaseResultMap" type="com.dcits.restapiapp.model.SchedulerCronModel">
+        <result column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+        <result column="cron" jdbcType="VARCHAR" property="cron" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="class_name" jdbcType="VARCHAR" property="className" />
+    </resultMap>
+
+    <select id="searchCronPatternByInterfaceId" parameterType="String" resultType="String">
+        select cron from scheduler_crons where interface_id=#{interfaceId}
+    </select>
+    <select id="searchAll" parameterType="String" resultType="com.dcits.restapiapp.model.SchedulerCronModel">
+        select interface_id as 'interfaceId',
+         cron as 'cron' ,
+         status as 'status' ,
+         class_name as 'className',
+         kafka_topic as 'kafkaTopic',
+         system_id as 'systemId'
+         from scheduler_crons
+    </select>
+    <select id="searchSchedulerCronByInterfaceId" parameterType="String" resultType="com.dcits.restapiapp.model.SchedulerCronModel">
+        select interface_id as 'interfaceId',
+        cron as 'cron',
+        status as 'status',
+        class_name as 'className',
+        kafka_topic as 'kafkaTopic',
+         system_id as 'systemId'
+        from scheduler_crons where interface_id=#{interfaceId}
+    </select>
+    <update id="updateStatusByInterfaceId" parameterType="String">
+        update scheduler_crons set status=#{status} where interface_id=#{interfaceId}
+    </update>
+
+    <update id="updateCronByInterfaceId" parameterType="String">
+        update scheduler_crons set cron=#{cron} where  interface_id=#{interfaceId}
+    </update>
+    <update id="updateAllTaskStatus" >
+        update scheduler_crons set status='stopped'
+    </update>
+
+
+    <insert id="saveScheduleCron" parameterType="com.dcits.restapiapp.model.SchedulerCronModel">
+        insert into scheduler_crons(interface_id,
+        cron,
+        status,
+        class_name,
+        kafka_topic)values
+        (
+        #{interfaceId},
+        #{cron},
+        #{status},
+        #{className},
+        #{kafkaTopic}
+        )
+    </insert>
+
+    <delete id="deleteByInterfaceIds" parameterType="String">
+        delete from  scheduler_crons where interface_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="searchRunningTask" resultType="com.dcits.restapiapp.model.SchedulerCronModel">
+          select interface_id as 'interfaceId',
+         cron as 'cron' ,
+         status as 'status' ,
+         class_name as 'className',
+         kafka_topic as 'kafkaTopic',
+         system_id as 'systemId'
+         from scheduler_crons where status='running'
+    </select>
+
+</mapper>

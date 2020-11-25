@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.SchedulerJobLogMapper" >
+    <resultMap id="BaseResultMap" type="com.dcits.restapiapp.model.SchedulerJobLogModel">
+        <result column="scheduler_job_id" jdbcType="VARCHAR" property="schedulerJobId" />
+        <result column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="success_desc" jdbcType="VARCHAR" property="successDesc" />
+        <result column="fail_desc" jdbcType="VARCHAR" property="failDesc" />
+        <result column="process_class" jdbcType="VARCHAR" property="processClass" />
+        <result column="process_start_time" jdbcType="TIMESTAMP" property="processStartTime" />
+        <result column="process_end_time" jdbcType="TIMESTAMP" property="processEndTime" />
+        <result column="process_milliseconds" jdbcType="BIGINT" property="processMilliseconds" />
+    </resultMap>
+
+   <insert id="insertALog" parameterType="com.dcits.restapiapp.model.SchedulerJobLogModel">
+       insert into scheduler_job_log (
+       scheduler_job_id ,
+       interface_id,
+       interface_name,
+       status,
+       success_desc,
+       fail_desc,
+       process_class,
+       process_start_time,
+       process_end_time,
+       process_milliseconds)
+       values (
+       #{schedulerJobId},
+       #{interfaceId},
+       #{interfaceName},
+       #{status},
+       #{successDesc},
+       #{failDesc},
+       #{processClass},
+       #{processStartTime},
+       #{processEndTime},
+       #{processMilliseconds}
+       )
+   </insert>
+
+    <select id="searchLogByInterfaceIdAndDate" resultType="com.dcits.restapiapp.model.SchedulerJobLogModel">
+        select a.scheduler_job_id as 'schedulerJobId',
+        a.interface_id as 'interfaceId',
+        a.status as 'status',
+        a.success_desc as 'successDesc',
+        a.fail_desc as 'failDesc',
+        a.process_class as 'processClass',
+        a.process_start_time as 'processStartTime',
+        a.process_end_time as 'processEndTime',
+        a.process_milliseconds as 'processMilliseconds' ,
+        b.interface_name as 'interfaceName' from scheduler_job_log a,http_base_info b
+        where (a.interface_id=#{interfaceIdOrName} or b.interface_name like "%"#{interfaceIdOrName}"%") and (a.process_start_time between #{startTime} and #{endTime})
+        and b.interface_id=a.interface_id order by a.process_start_time desc
+    </select>
+
+    <delete id="deleteLogPre15Days">
+        delete from scheduler_job_log where process_start_time &lt; date_add(curdate(),INTERVAL -15 day)
+    </delete>
+
+
+    <delete id="deleteByInterfaceIds">
+        delete from scheduler_job_log where interface_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

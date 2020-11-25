@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.DataAccessMapper" >
+    
+    <select id="selectExternalSystemMetaDataBySysIdAndBussinessType"  resultType="com.dcits.restapiapp.model.ExternalSystemModel">
+        select external_system_id as 'externalSystemId',
+        bussiness_type as 'bussinessType',
+         kafka_topic as 'kafkaTopic' from external_system
+         where external_system_id=#{systemId} and bussiness_type=#{bussinessType}
+    </select>
+
+
+    <insert id="insertALog" parameterType="com.dcits.restapiapp.model.ExternalSystemSchedulerLogModel">
+       insert into external_system_scheduler_log (
+       external_system_id ,
+       bussiness_type,
+       start_time,
+       end_time,
+       status,
+       process_milliseconds,
+       description
+       )
+       values (
+       #{externalSystemId},
+       #{bussinessType},
+       #{startTime},
+       #{endTime},
+       #{status},
+       #{processMilliseconds},
+       #{description}
+       )
+   </insert>
+
+
+
+
+
+
+</mapper>

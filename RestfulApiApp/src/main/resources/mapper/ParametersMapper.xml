@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.ParametersMapper" >
+    <resultMap id="BaseResultMap" type="com.dcits.restapiapp.model.ParametersModel">
+        <result column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+        <result column="key_name" jdbcType="VARCHAR" property="key" />
+        <result column="value_name" jdbcType="VARCHAR" property="value" />
+        <result column="value_type" jdbcType="VARCHAR" property="valueType" />
+    </resultMap>
+
+    <select id="searchParametersByInterfaceId" parameterType="String" resultType="com.dcits.restapiapp.model.ParametersModel">
+        select interface_id as 'interfaceId',
+        key_name as 'key',
+        value_name as 'value',
+        value_type as 'valueType'
+         from parameters where interface_id=#{interfaceId}
+    </select>
+
+
+    <insert id="saveParametersList" parameterType="java.util.List">
+        insert into parameters(interface_id,key_name,value_name,value_type)values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.interfaceId},
+            #{item.key},
+            #{item.value},
+            #{item.valueType}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByInterfaceIds" parameterType="String">
+        delete from parameters where interface_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

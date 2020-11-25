@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.HeadersMapper" >
+    <resultMap id="BaseResultMap" type="com.dcits.restapiapp.model.HeadersModel">
+        <result column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+        <result column="key_name" jdbcType="VARCHAR" property="key" />
+        <result column="value_name" jdbcType="VARCHAR" property="value" />
+    </resultMap>
+
+    <select id="searchHeadersByInterfaceId" parameterType="String" resultType="com.dcits.restapiapp.model.HeadersModel">
+        select interface_id as 'interfaceId',
+        key_name as 'key',
+        value_name as 'value'
+         from headers where interface_id=#{interfaceId}
+    </select>
+    <insert id="saveHeaderList" parameterType="java.util.List">
+        insert into headers(interface_id,key_name,value_name)values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.interfaceId},
+            #{item.key},
+            #{item.value}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByInerfaceIds" parameterType="String" >
+        delete from headers where interface_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+    </delete>
+
+
+
+
+</mapper>

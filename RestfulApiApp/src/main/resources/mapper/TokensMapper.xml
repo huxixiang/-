@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dcits.restapiapp.mapper.TokensMapper" >
+    <resultMap id="BaseResultMap" type="com.dcits.restapiapp.model.TokensModel">
+        <result column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+        <result column="system_id" jdbcType="VARCHAR" property="systemId" />
+        <result column="token" jdbcType="VARCHAR" property="token" />
+        <result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime" />
+    </resultMap>
+
+    <select id="searchTokenByInterfaceId" parameterType="String" resultType="com.dcits.restapiapp.model.TokensModel">
+        select interface_id as 'interfaceId',
+        system_id as 'systemId',
+        token as 'token',
+        effective_end_time as 'effectiveEndTime'
+         from tokens where interface_id=#{interfaceId}
+    </select>
+
+    <delete id="deleteByInterfaceIds" parameterType="String">
+        delete from tokens where interface_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertToken" parameterType="Map">
+        insert into tokens(interface_id,token,effective_end_time,system_id)values(
+        #{interfaceId},#{token},#{effective_end_time},#{system_id}
+        )ON DUPLICATE KEY UPDATE interface_id=#{interfaceId},token=#{token},
+        effective_end_time=#{effective_end_time},
+        system_id=#{system_id}
+    </insert>
+
+    <select id="searchTokenBySystemId" parameterType="String" resultType="com.dcits.restapiapp.model.TokensModel">
+      select interface_id as 'interfaceId',
+        system_id as 'systemId',
+        token as 'token',
+        effective_end_time as 'effectiveEndTime'
+         from tokens where system_id=#{systemId}
+
+    </select>
+
+
+</mapper>
